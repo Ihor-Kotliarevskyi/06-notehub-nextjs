@@ -1,7 +1,7 @@
 import Link from "next/link";
 import css from "./Header.module.css"
 
-const Header = () =>{
+function Header() {
     return <header className={css.header}>
   <Link href="/" aria-label="Home">
     NoteHub

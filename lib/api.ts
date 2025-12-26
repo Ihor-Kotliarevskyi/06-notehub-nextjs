@@ -1,0 +1,61 @@
+import axios from "axios";
+import type { CreateNote, Note } from "../types/note";
+
+export interface NotesHttpResponse {
+  notes: Note[];
+  totalPages: number;
+}
+
+const MY_KEY = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
+
+axios.defaults.baseURL = "https://notehub-public.goit.study/api";
+
+export const fetchNotes = async (searchText: string, page: number): Promise<NotesHttpResponse> => {
+  const options = {
+    params: {
+      ...(searchText !== "" && { search: searchText }),
+      page,
+      perPage: 12,
+    },
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${MY_KEY}`,
+    },
+  };
+  const response = await axios.get<NotesHttpResponse>("/notes", options);
+  return response.data;
+};
+
+export const createNote = async (newNote: CreateNote): Promise<Note> => {
+  const options = {
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${MY_KEY}`,
+    },
+  };
+  const response = await axios.post<Note>("/notes", newNote, options);
+  return response.data;
+};
+
+export const deleteNote = async (id: Note["id"]): Promise<Note> => {
+  const options = {
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${MY_KEY}`,
+    },
+  };
+  const response = await axios.delete<Note>(`/notes/${id}`, options);
+  return response.data
+};
+
+export const fetchNoteById = async (id: Note["id"]): Promise<Note> => {
+  const options = {
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${MY_KEY}`,
+    },
+  };
+  const response = await axios.get<Note>(`/notes/${id}`, options);
+  return response.data
+};
+
