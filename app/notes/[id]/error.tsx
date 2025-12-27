@@ -2,11 +2,17 @@
 
 type Props = {
   error: Error;
+  reset: () => void;
+
 };
 
-const ErrorMessage = ({ error }: Props) => {
+const ErrorMessage = ({ error, reset }: Props) => {
   return (
-    <p>Could not fetch note details. {error.message}</p>
+    <>
+      <p>Could not fetch note details. {error.message}</p>
+      <button onClick={reset}>Try again</button>
+    </>
+
   );
 }
 

@@ -9,9 +9,6 @@ type Props = {
 const NoteDetails = async ({ params }: Props) => {
   const { id } = await params;
   const queryClient = new QueryClient();
-  console.log(id);
-  console.log(dehydrate(queryClient));
-  
 
   await queryClient.prefetchQuery({
     queryKey: ["note", id],

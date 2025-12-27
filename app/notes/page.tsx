@@ -1,10 +1,10 @@
-import NoteList from "@/components/NoteList/NoteList";
-import { fetchNotes } from "@/lib/api";
+import NotesClient from "./Notes.client";
 
 async function Notes() {
-  const {notes} = await fetchNotes("", 1)
 
-  return <NoteList notes={notes} />;
+  return (
+      <NotesClient/>
+  );
 }
 
 export default Notes;

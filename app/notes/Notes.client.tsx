@@ -1,43 +1,76 @@
-'use client'
+"use client";
 
 import NoteList from "@/components/NoteList/NoteList";
-import { deleteNote, fetchNotes, NotesHttpResponse } from "@/lib/api";
-import { Note } from "@/types/note";
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchNotes, NotesHttpResponse } from "@/lib/api";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import toast from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
+import css from "./NotesPage.module.css";
+import SearchBox from "@/components/SearchBox/SearchBox";
+import Pagination from "@/components/Pagination/Pagination";
+import Modal from "@/components/Modal/Modal";
+import NoteForm from "@/components/NoteForm/NoteForm";
+import { useDebouncedCallback } from "use-debounce";
 
 function NotesClient() {
-const [currentPage, setCurrentPage] = useState<number>(1);
-const [searchText, setSearchText] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+  const [searchText, setSearchText] = useState<string>("");
 
-const queryClient = useQueryClient()
-
-const deletionM = useMutation<void, Error, Note["id"]>({
-  mutationFn: async (id: Note["id"]) => {
-    await deleteNote(id);
-  },
-  onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Failed to delete note");
+  const debouncedSearch = useDebouncedCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchText(e.target.value);
+      setCurrentPage(1);
     },
-  onSuccess: ()=> {
-    queryClient.invalidateQueries({queryKey: ["notes"]});
-    toast.error("Note deleted");
-  }
-})
+    500
+  );
 
   const {
-    data: { notes = [], totalPages = 0 } = {},
-    isLoading,
-    isError,
-    error,
+    data: { notes = [], totalPages = 0 } = {}
   } = useQuery<NotesHttpResponse, Error>({
     queryKey: ["notes", currentPage, searchText],
     queryFn: () => fetchNotes(searchText, currentPage),
     placeholderData: keepPreviousData,
   });
-
-  return (<NoteList notes={notes} handleClick={()=>{deletionM.mutate(id)}}/>)
+  return (
+    <>
+      <div className={css.app}>
+        <header className={css.toolbar}>
+          <SearchBox search={searchText} onChange={debouncedSearch} />
+          {totalPages > 1 && (
+            <Pagination
+              totalPages={totalPages}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+            />
+          )}
+          <button
+            className={css.button}
+            onClick={() => {
+              setIsOpenModal(true);
+            }}
+          >
+            Create note +
+          </button>
+        </header>
+        {notes.length > 0 && <NoteList notes={notes || []} />}
+      </div>
+      {isOpenModal && (
+        <Modal
+          onClose={() => {
+            setIsOpenModal(false);
+          }}
+        >
+          <NoteForm
+            onClose={() => {
+              setIsOpenModal(false);
+            }}
+          />
+        </Modal>
+      )}
+      <Toaster position="bottom-center" reverseOrder={true} />
+    </>
+  );
 }
 
 export default NotesClient;
