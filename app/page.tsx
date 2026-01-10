@@ -1,7 +1,11 @@
 import Home from "@/components/Home/Home";
 
-function App() {
-    return <Home />
+function Notes() {
+  return (
+    <section>
+      <Home />
+    </section>
+  );
 }
 
- export default App; 
+export default Notes;

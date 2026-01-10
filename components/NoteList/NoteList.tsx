@@ -21,7 +21,7 @@ const deletionM = useMutation<void, Error, Note["id"]>({
     },
   onSuccess: ()=> {
     queryClient.invalidateQueries({queryKey: ["notes"]});
-    toast.error("Note deleted");
+    toast.success("Note deleted");
   }
 })
 

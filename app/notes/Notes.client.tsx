@@ -25,9 +25,10 @@ function NotesClient() {
     500
   );
 
-  const {
-    data: { notes = [], totalPages = 0 } = {}
-  } = useQuery<NotesHttpResponse, Error>({
+  const { data: { notes = [], totalPages = 0 } = {} } = useQuery<
+    NotesHttpResponse,
+    Error
+  >({
     queryKey: ["notes", currentPage, searchText],
     queryFn: () => fetchNotes(searchText, currentPage),
     placeholderData: keepPreviousData,
