@@ -11,14 +11,17 @@ function NoteDetailsClient() {
 
 
 const {
-    data
+    data, isLoading, error
   } = useQuery<Note, Error>({
     queryKey: ["note", id],
     queryFn: () => fetchNoteById(id),
     placeholderData: keepPreviousData,
 	refetchOnMount: false,
-
   });
+
+  if (isLoading) return <p>Loading, please wait...</p>
+
+  if (error || !data) return <p>Something went wrong.</p>;
 
     return (<div className={css.container}>
 	<div className={css.item}>

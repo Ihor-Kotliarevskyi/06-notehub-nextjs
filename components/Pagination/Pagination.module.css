@@ -31,7 +31,11 @@
 }
 
 .active {
-  background-color: #0a66c2;
+  background-color: #0d6efd;
   color: white;
   font-weight: bold;
+}
+
+.active:hover {
+  background-color: #0b5ed7;
 }
